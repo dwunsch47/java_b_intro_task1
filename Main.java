@@ -1,35 +1,77 @@
+import java.util.Random;
 import java.util.Scanner;
 
-public class Main{
+public class Main {
+    public static final int SIZE = 8;
+    public static final int VALUE_UPPER_BOUND = 256;
+    public static final char SEPARATOR = ' ';
+    public static final String EMPTY_FILLER = "";
+    public static final String SINGLE_FILLER = " ";
+    public static final String DOUBLE_FILLER = "  ";
+
     public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
+        Random random = new Random();
 
-        String[] options = {"Молоко", "Хлеб", "Гречка"};
-        int[] prices = {50, 14, 80};
-
-        int[] amount = new int[options.length];
-
-        while (true) {
-            System.out.println("Выберите товар и количество или введите end: ");
-            String input = scan.nextLine();
-            if (input.equals("end")) {
-                break;
-            }
-            String[] split_input = input.split(" ");
-            amount[(Integer.parseInt(split_input[0]) - 1)] += Integer.parseInt(split_input[1]);
-        }
-
-        int finalPrice = 0;
-
-        System.out.println("Ваша корзина:");
-        for (int i = 0; i < amount.length; i++) {
-            if (amount[i] > 0) {
-                int priceForAmount = amount[i] * prices[i];
-                finalPrice += priceForAmount;
-                System.out.println(options[i] + ' '+ amount[i] + " шт " + prices[i] + " руб/шт, "
-                        + priceForAmount + " руб в сумме");
+        int[][] originalMatrix = new int[SIZE][SIZE];
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                originalMatrix[i][j] = random.nextInt(VALUE_UPPER_BOUND);
             }
         }
-        System.out.println("Итого: " + finalPrice);
+
+        printMatrix(originalMatrix);
+        System.out.print("Enter clockwise rotation angle (90, 180, 270): ");
+        int rotationAngle = sc.nextInt();
+        int[][] newMatrix = rotateMatrix(originalMatrix, rotationAngle);
+        System.out.println("Rotated matrix");
+        printMatrix(newMatrix);
+    }
+
+    public static int[][] rotateMatrix(int[][] oldMatrix, int angle) {
+        int[][] resultMatrix = new int[SIZE][SIZE];
+//        if (angle == 90) {
+//            for (int i = 0; i < SIZE; i++) {
+//                for (int j = 0; j < SIZE; j++) {
+//                    resultMatrix[j][SIZE - 1 - i] = oldMatrix[i][j];
+//                }
+//            }
+//        } else if (angle == 180) {
+//            for (int i = 0; i < SIZE; i++) {
+//                for (int j = 0; j < SIZE; j++) {
+//                    resultMatrix[SIZE - 1 - i][SIZE - 1 - j] = oldMatrix[i][j];
+//                }
+//            }
+//        } else if (angle == 270) {
+//            for (int i = 0; i < SIZE; i++) {
+//                for (int j = 0; j < SIZE; j++) {
+//                    resultMatrix[SIZE - 1 - j][i] = oldMatrix[i][j];
+//                }
+//            }
+//        }
+
+        int newI, newJ;
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                newI = (angle == 90 ? j : (angle == 180 ? (SIZE - 1 - i) : (SIZE - 1 - j))); // assume only three valid inputs: 90, 180, 270
+                newJ = (angle == 90 ? (SIZE - 1 - i) : (angle == 180 ? (SIZE - 1 - j) : i));
+                resultMatrix[newI][newJ] = oldMatrix[i][j];
+            }
+        }
+
+        return resultMatrix;
+    }
+
+    public static String printFiller(int cell) {
+        return (cell >= 100 ? EMPTY_FILLER : (cell >= 10 ? SINGLE_FILLER : DOUBLE_FILLER));
+    }
+
+    public static void printMatrix(int[][] matrix) {
+        for (int[] row : matrix) {
+            for (int cell : row) {
+                System.out.print(printFiller(cell) + cell + SEPARATOR);
+            }
+            System.out.println();
+        }
     }
 }
