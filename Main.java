@@ -1,65 +1,40 @@
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main() {
-        List<String> jobList = new LinkedList<>();
+        Map<Address, Integer> costPerAddress = new HashMap<>();
+        Set<String> uniqueCountries = new HashSet<>();
+        int overallCost = 0;
+
+        costPerAddress.put(new Address("Россия", "Москва"), 1000);
+        costPerAddress.put(new Address("Россия", "Санкт-Петербург"), 750);
+        costPerAddress.put(new Address("Чехия", "Прага"), 2500);
 
         Scanner scanner = new Scanner(System.in);
-        int mode;
-        boolean isDeleteSuccessful;
-        while(true) {
-            System.out.print("Выберите операцию:\n\n0. Выход из программы\n1. Добавить дело\n2. Показать дела\n3. Удалить дело по номеру\n4. Удалить дело по названию\n5. Удалить слово\nВаш выбор: ");
-            mode = Integer.parseInt(scanner.nextLine());
-            if (mode == 0) {
-                break;
+        String country, city;
+        int weight, cost;
+        Address currentOrder;
+        while (true) {
+            System.out.print("Заполнение нового заказа.\nВведите страну: ");
+            country = scanner.nextLine();
+            if (country.equals("end")) break;
+            System.out.print("Введите город: ");
+            city = scanner.nextLine();
+            if (city.equals("end")) break;
+            uniqueCountries.add(country); // поздно т.к. пользователь может до этого момента отменить
+            System.out.print("Введите вес (кг): ");
+            weight = Integer.parseInt(scanner.nextLine());
+            currentOrder = new Address(country, city);
+            if (!costPerAddress.containsKey(currentOrder)) {
+                System.out.println("Доставки по этому адресу нет");
+            } else {
+                cost = weight * costPerAddress.get(currentOrder);
+                overallCost += cost;
+                System.out.println("Стоимость доставки составит: " + cost + " руб.");
             }
-            switch (mode) {
-                case 1:
-                    System.out.print("Введите название задачи: ");
-                    jobList.addLast(scanner.nextLine());
-                    System.out.println("\nДобавлено!");
-                    break;
-
-                case 2:
-                    break;
-
-                case 3:
-                    System.out.print("Введите номер для удаления: ");
-                    jobList.remove(Integer.parseInt(scanner.nextLine()) - 1);
-                    break;
-
-                case 4:
-                    System.out.print("Введите задачу для удаления: ");
-                    isDeleteSuccessful = jobList.remove(scanner.nextLine());
-                    System.out.println('\n' + (isDeleteSuccessful ? "Удалено!" : "Такой задачи нет"));
-                    break;
-
-                case 5:
-                    System.out.println("Введите слово для удаления: ");
-                    removeWord(jobList, scanner.nextLine());
-                    break;
-            }
-            displayJobList(jobList);
-        }
-    }
-
-    public static void displayJobList(List<String> jL) {
-        System.out.println("\nВаш сприсок дел:");
-        int counter = 1;
-        for (String job : jL) { // через обычный for пришлось бы каждый раз брать с помощью .get(), что, насколько я понимаю, приводило бы к сложности n на каждой итерации
-            System.out.println(counter++ + ". " + job);
-        }
-        System.out.println();
-    }
-
-    public static void removeWord(List<String> jL, String word) {
-        for (Iterator<String> it = jL.iterator(); it.hasNext();) {
-            if (it.next().contains(word)) {
-                it.remove();
-            }
+            System.out.println("Общая стоимость всех доставок: " + overallCost + " руб.");
+            System.out.println("Количество уникальных стран: " + uniqueCountries.size());
+            System.out.println();
         }
     }
 }
