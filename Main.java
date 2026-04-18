@@ -53,7 +53,7 @@ public class Main {
     }
 
     public static void logger(File file, boolean status, StringBuilder builder) {
-        builder.append("\"").append(file.getAbsoluteFile()).append(status ? "\" was created successfully" : " wasn't created");
+        builder.append('\"').append(file.getAbsoluteFile()).append(status ? "\" was created successfully" : "\" wasn't created");
         builder.append('\n');
     }
 
